@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - Tourism App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: url('/img/login-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 50, 100, 0.5);
+            z-index: 1;
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            max-width: 400px;
+            padding: 0 20px;
+        }
+
+        .login-box {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: all 0.5s ease;
+        }
+
+        .login-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            color: #1e3a5f;
+            margin-bottom: 20px;
+            font-size: 28px;
+            font-weight: 600;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 15px 20px;
+            border: none;
+            border-radius: 50px;
+            background: rgba(245, 245, 245, 0.8);
+            font-size: 16px;
+            outline: none;
+            transition: all 0.3s;
+            box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .input-group input:focus {
+            background: rgba(230, 240, 255, 0.9);
+            box-shadow: inset 0 2px 10px rgba(30, 58, 95, 0.2);
+        }
+
+        .input-group label {
+            position: absolute;
+            top: 15px;
+            left: 20px;
+            color: #666;
+            font-size: 16px;
+            pointer-events: none;
+            transition: all 0.3s;
+        }
+
+        .input-group input:focus + label,
+        .input-group input:valid + label {
+            top: -10px;
+            left: 15px;
+            font-size: 12px;
+            background: white;
+            padding: 0 5px;
+            color: #0077b6;
+        }
+
+        button {
+            background: linear-gradient(135deg, #0077b6, #1e3a5f);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+            box-shadow: 0 5px 15px rgba(0, 119, 182, 0.4);
+            width: 100%;
+        }
+
+        button:hover {
+            background: linear-gradient(135deg, #1e3a5f, #0077b6);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 119, 182, 0.6);
+        }
+
+        .footer {
+            margin-top: 30px;
+            color: white;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        .language-date {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 14px;
+            z-index: 2;
+        }
+
+        .error-msg {
+            color: #ff3333;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 8px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+
+        .success-msg {
+            color: #00aa00;
+            font-weight: bold;
+            margin-bottom: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 8px;
+            border-radius: 5px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="language-date">
+        ENG | 25-06-2025
+    </div>
+
+    <div class="login-container">
+        <div class="login-box">
+            <h2>Welcome</h2>
+
+            <!-- Error and success messages with the new logic -->
+            <p class="error-msg" th:if="${param.error}" th:text="'Invalid username or password'"></p>
+            <p class="success-msg" th:if="${param.logout}" th:text="'You have been logged out.'"></p>
+
+            <form th:action="@{/login}" method="post">
+                <div class="input-group">
+                    <input type="text" name="username" required>
+                    <label>Email</label>
+                </div>
+                <div class="input-group">
+                    <input type="password" name="password" required>
+                    <label>Password</label>
+                </div>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <div class="footer">
+            © 2025 Tourism App. All rights reserved.
+        </div>
+    </div>
+</body>
+</html>

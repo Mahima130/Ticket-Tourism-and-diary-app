@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Train Ticket Booking</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: url('/img/train1.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.75);
+            z-index: -1;
+        }
+
+        .navbar {
+            background-color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
+
+        .navbar h2 {
+            color: #1e3a5f;
+        }
+
+        .logout-btn {
+            background-color: #0077b6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #023e8a;
+            transform: translateX(5px);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 60px;
+            padding-bottom: 60px;
+        }
+
+        h1 {
+            color: #1e3a5f;
+            font-size: 2.3rem;
+            margin-bottom: 30px;
+        }
+
+        .booking-card {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        .booking-card:hover {
+            transform: scale(1.02);
+        }
+
+        input[type="text"], input[type="date"], select {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #bbb;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        input:focus, select:focus {
+            border-color: #0077b6;
+            outline: none;
+        }
+
+        button[type="submit"] {
+            background-color: #0077b6;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #023e8a;
+            transform: scale(1.05);
+        }
+
+        footer {
+            background-color: white;
+            text-align: center;
+            padding: 12px;
+            color: #666;
+            font-size: 0.9rem;
+            box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h2><a th:href="@{/}" style="text-decoration: none; color: inherit;">Tourism App</a></h2>
+    <button class="logout-btn" onclick="location.href='/logout'">Logout →</button>
+</div>
+
+<div class="container">
+    <h1>Train Ticket Booking</h1>
+    <form class="booking-card" method="post" action="/ticket/book/train">
+        <input type="text" name="username" placeholder="Your Name (optional)">
+        <input type="text" name="source" placeholder="From Station" required>
+        <input type="text" name="destination" placeholder="To Station" required>
+        <input type="date" name="travelDate" min="${T(java.time.LocalDate).now()}" required>
+        <select name="atravelClass" required>
+            <option value="">Select Class</option>
+            <option value="AC">AC</option>
+            <option value="Sleeper">Sleeper</option>
+            <option value="General">General</option>
+        </select>
+        <input type="text" name="seats" placeholder="No. of Seats" required>
+        <button type="submit">Book Ticket</button>
+    </form>
+    <button type="button" onclick="openModal()" style="
+    background-color: #0077b6; 
+    color: white; 
+    padding: 10px 20px; 
+    border: none; 
+    border-radius: 8px; 
+    font-size: 1rem;
+    cursor: pointer;
+    margin-top: 20px;
+">View Available Routes</button>
+    
+</div>
+
+<footer>
+    © 2025 Tourism App. All Rights Reserved.
+</footer>
+
+</body>
+<div id="routesModal" style="
+    display: none; 
+    position: fixed; 
+    z-index: 10000; 
+    left: 0; top: 0; 
+    width: 100%; height: 100%; 
+    background-color: rgba(0,0,0,0.5);
+">
+    <div style="
+        background: white; 
+        margin: 10% auto; 
+        padding: 20px; 
+        border-radius: 10px; 
+        width: 80%; 
+        max-width: 800px;
+        overflow-y: auto; 
+        max-height: 70%;
+    ">
+        <h2 style="color: #1e3a5f; text-align: center; margin-bottom: 20px;">Available Train Routes</h2>
+        <table border="1" style="width: 100%; border-collapse: collapse;">
+            <thead style="background-color: #0077b6; color: white;">
+                <tr>
+                    <th>ID</th>
+                    <th>Train Number</th>
+                    <th>Train Name</th>
+                    <th>Source</th>
+                    <th>Destination</th>
+                    <th>Available AC</th>
+                    <th>Available Sleeper</th>
+                    <th>Available General</th>
+                </tr>
+            </thead>
+            <tbody id="routesTableBody">
+                <!-- Filled dynamically -->
+            </tbody>
+        </table>
+        <button onclick="closeModal()" style="
+            margin-top: 15px; 
+            background-color: #0077b6; 
+            color: white; 
+            padding: 8px 16px; 
+            border: none; 
+            border-radius: 5px;
+            cursor: pointer;
+        ">Close</button>
+    </div>
+</div>
+<script>
+document.querySelector("form").addEventListener("submit", function(event) {
+    const travelDateInput = document.querySelector("input[name='travelDate']");
+    const selectedDate = new Date(travelDateInput.value);
+    const today = new Date();
+    today.setHours(0,0,0,0);
+
+    if (selectedDate < today) {
+        event.preventDefault();
+        alert("Inappropriate date selected! Please choose a valid future date.");
+    }
+});
+
+function openModal() {
+    document.getElementById('routesModal').style.display = 'block';
+
+    fetch('/api/train/routes')
+    .then(response => response.json())
+    .then(data => {
+        data.sort((a, b) => a.id - b.id);
+        const tbody = document.getElementById('routesTableBody');
+        tbody.innerHTML = '';
+        data.forEach(route => {
+            const row = `<tr>
+                <td>${route.id}</td>
+                <td>${route.trainNumber}</td>
+                <td>${route.trainName}</td>
+                <td>${route.source}</td>
+                <td>${route.destination}</td>
+                <td>${route.acSeats}</td>
+                <td>${route.sleeperSeats}</td>
+                <td>${route.generalSeats}</td>
+            </tr>`;
+            tbody.innerHTML += row;
+        });
+    })
+    .catch(err => console.error('Error loading routes:', err));
+}
+
+function closeModal() {
+    document.getElementById('routesModal').style.display = 'none';
+}
+</script>
+
+
+
+</html>

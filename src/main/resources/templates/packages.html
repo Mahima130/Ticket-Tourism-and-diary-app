@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Holiday Packages</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: url('/img/packages-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.75);
+            z-index: -1;
+        }
+
+        .navbar {
+            background-color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar h2 { color: #1e3a5f; }
+
+        .logout-btn {
+            background-color: #0077b6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #023e8a;
+            transform: translateX(5px);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 60px;
+            padding-bottom: 60px;
+            flex: 1;
+        }
+
+        h1 {
+            color: #1e3a5f;
+            font-size: 2.3rem;
+            margin-bottom: 30px;
+        }
+
+        .packages-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            width: 90%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .package-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            transition: transform 0.3s ease;
+        }
+
+        .package-card:hover { transform: translateY(-5px); }
+
+        .package-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .package-details {
+            padding: 20px;
+        }
+
+        .package-title {
+            color: #1e3a5f;
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .package-price {
+            font-weight: bold;
+            color: #0077b6;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .original-price {
+            text-decoration: line-through;
+            color: #777;
+            font-size: 1rem;
+            margin-right: 10px;
+        }
+
+        .hotel-type {
+            background-color: #f0f8ff;
+            color: #0077b6;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+
+        .facilities {
+            color: #555;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .book-btn {
+            background-color: #0077b6;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease;
+        }
+
+        .book-btn:hover {
+            background-color: #023e8a;
+        }
+
+        footer {
+            background-color: white;
+            text-align: center;
+            padding: 15px;
+            color: #666;
+            font-size: 0.9rem;
+            box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h2><a th:href="@{/}" style="text-decoration: none; color: inherit;">Tourism App</a></h2>
+     
+    <button class="logout-btn" onclick="location.href='/logout'">Logout →</button>
+</div>
+
+<div class="container">
+    <h1>Explore Holiday Packages</h1>
+
+    <div class="packages-grid">
+        <!-- Manali -->
+        <div class="package-card">
+            <img src="/img/manaLi.jpg" alt="Manali Escape" class="package-image">
+            <div class="package-details">
+                <h3 class="package-title">Manali Escape</h3>
+                <div class="hotel-type">4-star Hotel</div>
+                <div class="facilities">Facilities: Cab, Buffet, Snow Games</div>
+                <div class="package-price"><span class="original-price">₹16,999</span> ₹13,999</div>
+                <form th:action="@{/packages/packages-confirmation}" method="post">
+                    <input type="hidden" name="packageName" value="Manali Escape" />
+                    <input type="hidden" name="price" value="13999" />
+                    <button type="submit" class="book-btn">Book Now</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Goa -->
+        <div class="package-card">
+            <img src="/img/goa.jpg" alt="Goa Beach Delight" class="package-image">
+            <div class="package-details">
+                <h3 class="package-title">Goa Beach Delight</h3>
+                <div class="hotel-type">4-star Hotel</div>
+                <div class="facilities">Facilities: Cab, Buffet, Beach Walk</div>
+                <div class="package-price"><span class="original-price">₹16,999</span> ₹9,999</div>
+                <form th:action="@{/packages/packages-confirmation}" method="post">
+                    <input type="hidden" name="packageName" value="Goa Beach Delight" />
+                    <input type="hidden" name="price" value="9999" />
+                    <button type="submit" class="book-btn">Book Now</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Kerala -->
+        <div class="package-card">
+            <img src="/img/kerala.jpg" alt="Kerala Backwaters" class="package-image">
+            <div class="package-details">
+                <h3 class="package-title">Kerala Backwaters</h3>
+                <div class="hotel-type">5-star Hotel</div>
+                <div class="facilities">Facilities: Houseboat, Cab, Buffet</div>
+                <div class="package-price"><span class="original-price">₹9,999</span> ₹9,999</div>
+                <form th:action="@{/packages/packages-confirmation}" method="post">
+                    <input type="hidden" name="packageName" value="Kerala Backwaters" />
+                    <input type="hidden" name="price" value="9999" />
+                    <button type="submit" class="book-btn">Book Now</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Jaipur -->
+        <div class="package-card">
+            <img src="/img/jaipur.jpg" alt="Jaipur Heritage Tour" class="package-image">
+            <div class="package-details">
+                <h3 class="package-title">Jaipur Heritage Tour</h3>
+                <div class="hotel-type">3-star Hotel</div>
+                <div class="facilities">Facilities: Guide, Cab, Buffet</div>
+                <div class="package-price"><span class="original-price">₹12,499</span> ₹9,999</div>
+                <form th:action="@{/packages/packages-confirmation}" method="post">
+                    <input type="hidden" name="packageName" value="Jaipur Heritage Tour" />
+                    <input type="hidden" name="price" value="9999" />
+                    <button type="submit" class="book-btn">Book Now</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Shimla -->
+        <div class="package-card">
+            <img src="/img/shimla.jpg" alt="Snowfall View Package" class="package-image">
+            <div class="package-details">
+                <h3 class="package-title">Snowfall View Package</h3>
+                <div class="hotel-type">4-star Hotel</div>
+                <div class="facilities">Facilities: Snowfall View, Buffet, Cab</div>
+                <div class="package-price"><span class="original-price">₹14,999</span> ₹13,999</div>
+                <form th:action="@{/packages/packages-confirmation}" method="post">
+                    <input type="hidden" name="packageName" value="Snowfall View Package" />
+                    <input type="hidden" name="price" value="13999" />
+                    <button type="submit" class="book-btn">Book Now</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    © 2025 Tourism App. All Rights Reserved.
+</footer>
+
+</body>
+</html>

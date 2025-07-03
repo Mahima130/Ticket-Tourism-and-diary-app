@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>My Profile - Tourism App</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+        }
+        body::before {
+            content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.3); z-index: -1;
+        }
+        .navbar {
+            display: flex; justify-content: space-between; align-items: center;
+            background: #fff; padding: 15px 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            position: sticky; top: 0; z-index: 1000;
+        }
+        .navbar h2 { color: #1b4965; }
+        .navbar a { color: #1b4965; text-decoration: none; font-weight: bold; margin-left: 15px; }
+        .navbar a:hover { color: #ff4d4d; }
+
+        h1 { text-align: center; margin: 30px 0; color: #14213d; }
+
+        .section {
+            background: rgba(255,255,255,0.4); backdrop-filter: blur(8px);
+            padding: 20px; border-radius: 12px;
+            margin: 20px auto; width: 90%; max-width: 1100px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        .section h3 { color: #1b4965; margin-bottom: 10px; }
+
+        table {
+            width: 100%; border-collapse: collapse; margin-top: 10px;
+        }
+        th, td {
+            padding: 10px; border: 1px solid #ccc; text-align: center;
+        }
+        th { background: rgba(27,73,101,0.8); color: #fff; }
+
+        button.cancel-btn {
+            background: #ff4d4d; color: #fff; border: none; padding: 5px 10px;
+            border-radius: 6px; cursor: pointer; transition: 0.3s;
+        }
+        button.cancel-btn:hover { background: #d00000; }
+
+        .footer {
+            background: #fff; text-align: center; padding: 10px; color: #1b4965;
+            position: fixed; bottom: 0; width: 100%; box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h2><a th:href="@{/}" style="text-decoration: none; color: inherit;">Tourism App</a></h2>
+    <div>
+        <a th:href="@{/}">Home</a>
+        <a th:href="@{/logout}">Logout</a>
+    </div>
+</div>
+
+<h1>Welcome, <span th:text="${username}">Traveler</span>!</h1>
+
+<!-- Train Section -->
+<div class="section">
+    <h3>🚆 Train Tickets</h3>
+    <table th:if="${trainTickets.size() > 0}">
+        <thead>
+        <tr>
+            <th>ID</th><th>From</th><th>To</th><th>Class</th><th>Seats</th><th>Status</th><th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="t : ${trainTickets}">
+            <td th:text="${t.id}"></td>
+            <td th:text="${t.departureStation}"></td>
+            <td th:text="${t.arrivalStation}"></td>
+            <td th:text="${t.travelClass}"></td>
+            <td th:text="${t.seats}"></td>
+            <td th:text="${t.status}"></td>
+            <td>
+                <form th:action="@{'/cancel-train/' + ${t.id}}" method="post" th:if="${t.status != 'CANCELLED'}">
+                    <button class="cancel-btn" type="submit">Cancel</button>
+                </form>
+                <span th:if="${t.status == 'CANCELLED'}">Cancelled</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p th:if="${trainTickets.size() == 0}">No train bookings.</p>
+</div>
+
+<!-- Bus Section -->
+<div class="section">
+    <h3>🚌 Bus Tickets</h3>
+    <table th:if="${busTickets.size() > 0}">
+        <thead>
+        <tr>
+            <th>ID</th><th>From</th><th>To</th><th>Bus No.</th><th>Seats</th><th>Status</th><th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="b : ${busTickets}">
+            <td th:text="${b.id}"></td>
+            <td th:text="${b.departureLocation}"></td>
+            <td th:text="${b.arrivalLocation}"></td>
+            <td th:text="${b.busNumber}"></td>
+            <td th:text="${b.numberOfSeats}"></td>
+            <td th:text="${b.status}"></td>
+            <td>
+                <form th:action="@{'/cancel-bus/' + ${b.id}}" method="post" th:if="${b.status != 'CANCELLED'}">
+                    <button class="cancel-btn" type="submit">Cancel</button>
+                </form>
+                <span th:if="${b.status == 'CANCELLED'}">Cancelled</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p th:if="${busTickets.size() == 0}">No bus bookings.</p>
+</div>
+
+<!-- Flight Section -->
+<div class="section">
+    <h3>✈ Flight Tickets</h3>
+    <table th:if="${flightTickets.size() > 0}">
+        <thead>
+        <tr>
+            <th>ID</th><th>Flight</th><th>From</th><th>To</th><th>Class</th><th>Seats</th><th>Status</th><th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="f : ${flightTickets}">
+            <td th:text="${f.id}"></td>
+            <td th:text="${f.flightNumber} + ' / ' + ${f.flightName}"></td>
+            <td th:text="${f.source}"></td>
+            <td th:text="${f.destination}"></td>
+            <td th:text="${f.travelClass}"></td>
+            <td th:text="${f.seats}"></td>
+            <td th:text="${f.status}"></td>
+            <td>
+                <form th:action="@{'/cancel-flight/' + ${f.id}}" method="post" th:if="${f.status != 'CANCELLED'}">
+                    <button class="cancel-btn" type="submit">Cancel</button>
+                </form>
+                <span th:if="${f.status == 'CANCELLED'}">Cancelled</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p th:if="${flightTickets.size() == 0}">No flight bookings.</p>
+</div>
+
+<!-- Package Section -->
+<div class="section">
+    <h3>🎒 Holiday Package Bookings</h3>
+    <table th:if="${packageBookings.size() > 0}">
+        <thead>
+        <tr>
+            <th>ID</th><th>Package</th><th>Booked On</th><th>Price</th><th>Status</th><th>Action</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="p : ${packageBookings}">
+            <td th:text="${p.id}"></td>
+            <td th:text="${p.packageName}"></td>
+            <td th:text="${#temporals.format(p.bookingDate, 'dd MMM yyyy HH:mm')}"></td>
+            <td th:text="${p.price}"></td>
+            <td th:text="${p.status}"></td>
+            <td>
+                <form th:action="@{'/cancel-package/' + ${p.id}}" method="post" th:if="${p.status != 'CANCELLED'}">
+                    <button class="cancel-btn" type="submit">Cancel</button>
+                </form>
+                <span th:if="${p.status == 'CANCELLED'}">Cancelled</span>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <p th:if="${packageBookings.size() == 0}">No package bookings.</p>
+</div>
+
+<div class="footer">
+    &copy; 2025 Tourism Ticketing & Diary App. All rights reserved.
+</div>
+
+</body>
+</html>

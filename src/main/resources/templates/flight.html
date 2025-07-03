@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Flight Ticket Booking</title>
+    <style>
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        body {
+            background: url('/img/Flight-bg.jpg.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.75);
+            z-index: -1;
+        }
+
+        .navbar {
+            background-color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .navbar h2 {
+            color: #1e3a5f;
+            font-size: 1.5rem;
+        }
+
+        .logout-btn {
+            background-color: #0077b6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #005b8c;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 60px auto;
+            padding: 30px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: #1e3a5f;
+            text-align: center;
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+        }
+
+        .booking-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #4a5568;
+            font-size: 0.95rem;
+        }
+
+        input, select {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 1rem;
+            background-color: #f8fafc;
+            transition: border 0.3s ease;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #0077b6;
+            box-shadow: 0 0 0 2px rgba(0, 119, 182, 0.1);
+        }
+
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 15px;
+        }
+
+        .book-btn {
+            background-color: #0077b6;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1rem;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .book-btn:hover {
+            background-color: #005b8c;
+            transform: scale(1.05);
+        }
+
+        .view-routes {
+            text-align: center;
+            margin-top: 20px;
+            color: #0077b6;
+            text-decoration: none;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .view-routes:hover {
+            text-decoration: underline;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 25px;
+            border-radius: 8px;
+            width: 85%;
+            max-width: 800px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.3rem;
+            color: #1e3a5f;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #4a5568;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        th {
+            background-color: #0077b6;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #f8fafc;
+        }
+
+        footer {
+            background-color: white;
+            text-align: center;
+            padding: 12px;
+            color: #666;
+            font-size: 0.9rem;
+            box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h2>Tourism App</h2>
+    <button class="logout-btn" onclick="location.href='/logout'">Logout →</button>
+</div>
+
+<div class="container">
+    <h1>Flight Ticket Booking</h1>
+    
+    <form class="booking-form" th:action="@{/ticket/book/flight}" method="post">
+        <div class="form-group">
+            <label for="name">Passenger Name</label>
+            <input type="text" id="name" name="name" placeholder="Enter passenger name" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="source">From City</label>
+            <input type="text" id="source" name="source" placeholder="Enter departure city" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="destination">To City</label>
+            <input type="text" id="destination" name="destination" placeholder="Enter arrival city" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="travelDate">Travel Date</label>
+            <input type="date" id="travelDate" name="travelDate" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="travelClass">Class</label>
+            <select id="travelClass" name="travelClass" required>
+                <option value="Economy">Economy</option>
+                <option value="Business">Business</option>
+                <option value="First Class">First Class</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label for="seats">Number of Passengers</label>
+            <input type="number" id="seats" name="seats" min="1" value="1" required>
+        </div>
+        
+        <button type="submit" class="book-btn">Book Flight</button>
+    </form>
+    
+    <div class="view-routes" onclick="openModal()">View Available Flight Routes</div>
+</div>
+
+<footer>
+    © 2025 Tourism App. All Rights Reserved.
+</footer>
+
+<div id="routesModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">Available Flight Routes</h3>
+            <button class="close-btn" onclick="closeModal()">×</button>
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Flight Number</th>
+                    <th>Flight Name</th>
+                    <th>Source</th>
+                    <th>Destination</th>
+                    <th>Economy Seats</th>
+                    <th>Business Seats</th>
+                    <th>First Class Seats</th>
+                </tr>
+            </thead>
+            <tbody id="routesTableBody">
+                <!-- Filled dynamically -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+    const forms = document.querySelectorAll("form.booking-card");
+
+    forms.forEach(form => {
+        form.addEventListener("submit", function(event) {
+            const travelDateInput = form.querySelector("input[name='travelDate']");
+            if (!travelDateInput) return;  // Skip if no travel date input
+
+            const selectedDate = new Date(travelDateInput.value);
+            const today = new Date();
+            today.setHours(0,0,0,0); // Normalize today
+
+            if (selectedDate < today) {
+                event.preventDefault();
+                alert("Inappropriate date selected! Please choose a valid future date.");
+            }
+        });
+    });
+});
+
+
+function openModal() {
+    document.getElementById('routesModal').style.display = 'block';
+    
+    fetch('ticket/book/flight/api/routes')
+        .then(response => response.json())
+        .then(data => {
+            const tbody = document.getElementById('routesTableBody');
+            tbody.innerHTML = '';
+            
+            data.forEach(route => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${route.id}</td>
+                    <td>${route.flightNumber}</td>
+                    <td>${route.flightName || 'N/A'}</td>
+                    <td>${route.source}</td>
+                    <td>${route.destination}</td>
+                    <td>${route.economySeats}</td>
+                    <td>${route.businessSeats}</td>
+                    <td>${route.firstClassSeats}</td>
+                `;
+                tbody.appendChild(row);
+            });
+        })
+        .catch(error => {
+            console.error('Error fetching flight routes:', error);
+        });
+}
+
+function closeModal() {
+    document.getElementById('routesModal').style.display = 'none';
+}
+</script>
+
+</body>
+</html>

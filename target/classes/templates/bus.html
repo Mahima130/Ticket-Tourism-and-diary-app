@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Bus Ticket Booking</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: url('/img/Bus1-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(255, 255, 255, 0.75);
+            z-index: -1;
+        }
+
+        .navbar {
+            background-color: white;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.08);
+        }
+
+        .navbar h2 {
+            color: #1e3a5f;
+        }
+
+        .logout-btn {
+            background-color: #0077b6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .logout-btn:hover {
+            background-color: #023e8a;
+            transform: translateX(5px);
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 60px;
+            padding-bottom: 60px;
+        }
+
+        h1 {
+            color: #1e3a5f;
+            font-size: 2.3rem;
+            margin-bottom: 30px;
+        }
+
+        .booking-card {
+            background: white;
+            padding: 35px;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            width: 320px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        input[type="text"], input[type="date"], input[type="number"] {
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #bbb;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        input:focus {
+            border-color: #0077b6;
+            outline: none;
+        }
+
+        button {
+            background-color: #0077b6;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+            margin-top: 10px;
+        }
+
+        button:hover {
+            background-color: #023e8a;
+            transform: scale(1.05);
+        }
+
+        footer {
+            background-color: white;
+            text-align: center;
+            padding: 12px;
+            color: #666;
+            font-size: 0.9rem;
+            box-shadow: 0 -3px 10px rgba(0,0,0,0.1);
+            position: fixed;
+            width: 100%;
+            bottom: 0;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0; top: 0;
+            width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal-content {
+            background: white;
+            margin: 5% auto;
+            padding: 20px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 80%;
+            overflow-y: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        th {
+            background-color: #0077b6;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h2><a th:href="@{/}" style="text-decoration: none; color: inherit;">Tourism App</a></h2>
+    <button class="logout-btn" onclick="location.href='/logout'">Logout →</button>
+</div>
+
+<div class="container">
+    <h1>Bus Ticket Booking</h1>
+    <form class="booking-card" method="post" action="/ticket/book/bus">
+        <input type="text" name="passengerName" placeholder="Passenger Name" required>
+        <input type="text" name="source" placeholder="From City" required>
+        <input type="text" name="destination" placeholder="To City" required>
+        <input type="date" name="travelDate" required>
+        <input type="number" name="seats" placeholder="No. of Seats" required min="1">
+        <button type="submit">Book Ticket</button>
+    </form>
+    <button type="button" onclick="openBusModal()">View Available Routes</button>
+</div>
+
+<footer>
+    © 2025 Tourism App. All Rights Reserved.
+</footer>
+
+<div id="busModal" class="modal">
+    <div class="modal-content">
+        <h2 style="color: #1e3a5f; text-align: center; margin-bottom: 20px;">Available Bus Routes</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Bus Number</th>
+                    <th>Bus Name</th>
+                    <th>Departure City</th>
+                    <th>Arrival City</th>
+                    <th>Total Seats</th>
+                </tr>
+            </thead>
+            <tbody id="busRoutesTableBody">
+                <!-- Filled dynamically -->
+            </tbody>
+        </table>
+        <button onclick="closeBusModal()">Close</button>
+    </div>
+</div>
+<script>
+
+document.addEventListener("DOMContentLoaded", function() {
+    const forms = document.querySelectorAll("form.booking-card");
+
+    forms.forEach(form => {
+        form.addEventListener("submit", function(event) {
+            const travelDateInput = form.querySelector("input[name='travelDate']");
+            if (!travelDateInput) return;  // Skip if no travel date input
+
+            const selectedDate = new Date(travelDateInput.value);
+            const today = new Date();
+            today.setHours(0,0,0,0); // Normalize today
+
+            if (selectedDate < today) {
+                event.preventDefault();
+                alert("Inappropriate date selected! Please choose a valid future date.");
+            }
+        });
+    });
+});
+
+
+function openBusModal() {
+    document.getElementById('busModal').style.display = 'block';
+
+    // Use absolute path to avoid confusion
+    fetch('/ticket/book/bus/api/bus/routes')
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log('Received data:', data); // Debug log
+            if (!Array.isArray(data)) {
+                throw new Error('Expected array but got ' + typeof data);
+            }
+            
+            data.sort((a, b) => a.id - b.id);
+            const tbody = document.getElementById('busRoutesTableBody');
+            tbody.innerHTML = '';
+            
+            data.forEach(route => {
+                const row = `<tr>
+                    <td>${route.id}</td>
+                    <td>${route.busNumber}</td>
+                    <td>${route.busName || 'N/A'}</td>
+                    <td>${route.departureCity}</td>
+                    <td>${route.arrivalCity}</td> <!-- Fixed typo from 'arrivalCity' -->
+                    <td>${route.totalSeats}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        })
+        .catch(err => {
+            console.error('Error loading bus routes:', err);
+            // Show error to user
+            alert('Failed to load bus routes. Please check console for details.');
+        });
+}
+
+function closeBusModal() {
+    document.getElementById('busModal').style.display = 'none';
+}
+</script>
+
+</body>
+</html>

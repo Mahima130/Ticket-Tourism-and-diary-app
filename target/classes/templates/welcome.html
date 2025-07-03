@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Welcome - Tourism App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            overflow-y: scroll;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(to bottom right, rgba(255,255,255,0.3), rgba(255,255,255,0.2));
+            z-index: -1;
+        }
+
+        /* Navbar */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: #ffffff;
+            padding: 15px 30px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar h2 {
+            margin: 0;
+            font-size: 1.8rem;
+            color: #1b4965;
+        }
+
+        .navbar a.logout {
+            color: #1b4965;
+            font-weight: bold;
+            text-decoration: none;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .navbar a.logout::after {
+            content: ' →';
+            opacity: 0;
+            transform: translateX(-5px);
+            transition: all 0.3s ease;
+        }
+
+        .navbar a.logout:hover {
+            color: #ff4d4d;
+        }
+
+        .navbar a.logout:hover::after {
+            opacity: 1;
+            transform: translateX(5px);
+        }
+
+        /* Welcome text */
+        h1 {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 2.8rem;
+            color: #14213d;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.6);
+        }
+
+        /* Cards */
+        .card-container {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 60px;
+            padding: 60px 20px 100px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            width: 230px;
+            height: 120px;
+            text-align: center;
+            padding: 35px;
+            color: #1b4965;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            transition: transform 0.4s ease, box-shadow 0.4s ease, background-color 0.4s ease;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .card:hover {
+            transform: scale(1.08);
+            background-color: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.3);
+        }
+
+        .card a {
+            color: #1b4965;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+
+        /* Footer */
+        .footer {
+            background-color: #ffffff;
+            text-align: center;
+            padding: 15px;
+            color: #1b4965;
+            font-size: 0.9rem;
+            box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f0f0f0;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #1b4965;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #023e8a;
+        }
+
+        @media screen and (max-width: 600px) {
+            .card-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            h1 {
+                font-size: 2rem;
+                margin: 20px 0;
+            }
+
+            .card {
+                width: 80%;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="navbar">
+    <h2>Tourism App</h2>
+    <div>
+        <a class="logout" th:href="@{/profile}">Profile</a> |
+        <a class="logout" th:href="@{/logout}">Logout</a>
+    </div>
+</div>
+
+<h1>Welcome, <span th:text="${username}">Traveler</span>!</h1>
+
+<div class="card-container">
+    <div class="card">
+        <a th:href="@{/diary}">📔 Diary Entry</a> </div>
+    <div class="card">
+        <a th:href="@{/packages}">🎒 Holiday Packages</a>
+    </div>
+    <div class="card">
+        <a th:href="@{/train}">🚆 Train Booking</a>
+    </div>
+    <div class="card">
+        <a th:href="@{/bus}">🚌 Bus/Volvo Booking</a>
+    </div>
+    <div class="card">
+        <a th:href="@{/flight}">✈ Flight Booking</a>
+    </div>
+    </div>
+
+<div class="footer">
+    &copy; 2025 Tourism Ticketing & Diary App. All rights reserved.
+</div>
+
+</body>
+</html>
+
