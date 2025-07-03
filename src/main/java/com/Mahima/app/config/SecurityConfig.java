@@ -21,7 +21,7 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
-                .loginPage("/register")
+                .loginPage("/login")
                 .defaultSuccessUrl("/welcome", true)
                 .failureUrl("/login?error=true")
                 .permitAll()
