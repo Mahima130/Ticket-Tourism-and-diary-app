@@ -161,6 +161,25 @@
             border-radius: 5px;
             display: inline-block;
         }
+
+        /* New styles for register link */
+        .register-link {
+            margin-top: 20px;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .register-link a {
+            color: #0077b6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .register-link a:hover {
+            color: #1e3a5f;
+            text-decoration: underline;
+        }
     </style>
 </head>
 <body>
@@ -172,9 +191,10 @@
         <div class="login-box">
             <h2>Welcome</h2>
 
-            <!-- Error and success messages with the new logic -->
+            <!-- Error and success messages -->
             <p class="error-msg" th:if="${param.error}" th:text="'Invalid username or password'"></p>
             <p class="success-msg" th:if="${param.logout}" th:text="'You have been logged out.'"></p>
+            <p class="success-msg" th:if="${param.registered}" th:text="'Registration successful! Please login.'"></p>
 
             <form th:action="@{/login}" method="post">
                 <div class="input-group">
@@ -187,6 +207,10 @@
                 </div>
                 <button type="submit">Login</button>
             </form>
+
+            <div class="register-link">
+                Don't have an account? <a th:href="@{/register}">Register here</a>
+            </div>
         </div>
 
         <div class="footer">
